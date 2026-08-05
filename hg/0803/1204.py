@@ -1,4 +1,5 @@
-#1203 최빈수 구하기
+#1204 최빈수 구하기
+
 def solve():
   T_case = int(input())
 
