@@ -11,36 +11,63 @@
 
 ## 📌 문제 정보
 - **플랫폼:** SW Expert Academy (SWEA)
-- **문제 번호/이름:** 1204번 - 최빈수 구하기
+- **문제 번호/이름:** 1974번 - 스도쿠 검증
 - **난이도:** D2
 
 ---
 
 ## 💻 제출 코드
 ```python
-def solve():
-    T_case = int(input())
-    
-    for _ in range(1, T_case + 1):
-        tc = input().strip()
-        scores = list(map(int, input().split()))
-        
-        counts = [0] * 101
-        for s in scores:
-            counts[s] += 1
-            
-        max_freq = 0
-        ans_score = 0
-        
-        for score in range(101):
-            if counts[score] >= max_freq:
-                max_freq = counts[score]
-                ans_score = score
-                
-        print(f"#{tc} {ans_score}")
+# 10개의 스도쿠 게임 만듬
+T = int(input())
+for test_case in range(1, T + 1):
+    puzzle = []
+    for i in range(9):
+        raw_data = list(map(int, input().split()))
+        puzzle.append(raw_data)
 
-if __name__ == '__main__':
-    solve()
+    result = 1
+
+# 가로열 검증
+    for row in puzzle:
+        row_nums = []
+        for num in row:
+            if num in row_nums:
+                result = 0
+                break
+            else:
+                row_nums.append(num)
+
+
+# 세로열 검증
+    if result == 1:
+        for c in range(9):
+            col_nums = []
+            for r in range(9):
+                column_num = puzzle[r][c]
+                if column_num in col_nums:
+                    result = 0
+                    break
+                else:
+                    col_nums.append(column_num)
+
+
+# 3x3 범위 검증
+    if result == 1:
+        for r in range(0, 9, 3):
+            for c in range(0, 9, 3):
+                box_nums = []
+                for i in range(3):
+                    for j in range(3):
+                        num = puzzle[r + i][c + j]
+                        if num in box_nums:
+                            result = 0
+                            break
+                        else:
+                            box_nums.append(num)
+
+
+    print(f"#{test_case} {result}")
 
 ```
 
@@ -49,16 +76,18 @@ if __name__ == '__main__':
 ## 🔥 어려웠던 점 & 트러블 슈팅 (Troubleshooting)
 
 1. **문제 상황 / 고민:**
-* 처음에는 `sys.stdin.read`를 사용해서 전체 입력을 한 번에 처리하려고 했는데, SWEA 제출 환경에서 컴파일 오류나 인덱스 꼬임 문제가 발생함.
+* 문제 구상은 했지만, 문제 풀이과정에서 3x3범위를 어떻게 검증해야하는지 생각을 못함.
+* 결과 출력 단계에서 검증 성공 시 1, 실패 시 0을 출력하는 부분에서 방향을 잡지 못함.
 
 
 2. **원인 분석:**
-* SWEA 플랫폼의 파이썬 실행 환경 특성 및 로컬 테스트와의 차이 때문에 `import sys`를 통한 입출력 최적화 방식이 오히려 에러를 유발함.
+* 반복문으로 범위 지정을 하는 법을 몰랐음.
+* if 문으로 처음 시도했지만 결과가 잘나오지 못해 AI 도움을 받음.
 
 
 3. **해결 방법:**
-* `sys` 모듈을 완전히 제거하고 기본 내장 함수인 `input()`과 `split()`을 활용하여 안전하게 한 줄씩 데이터를 처리하도록 수정함.
-* 최빈수가 여러 개인 경우 "가장 큰 점수"를 출력해야 하므로, 반복문을 돌릴 때 `>=`(크거나 같다) 연산자를 사용하여 나중에 탐색되는 큰 점수로 갱신되도록 로직을 작성함.
+* AI도움으로 문제를 풀었고 강사님이 설명해주셔서 이해할 수 있었음.
+* AI의 도움으로 기존 result 값에 1을 할당하고 검증 실패 시 0을 재할당하는 방법으로 해결.
 
 
 
@@ -66,7 +95,8 @@ if __name__ == '__main__':
 
 ## 💡 배운 점 / 느낀 점
 
-* 알고리즘 로직 자체는 빈도수 배열을 활용해 쉽게 짰지만, 플랫폼 환경에 따라 입출력 방식을 다르게 가져가야 한다는 점을 배웠다. 앞으로 SWEA에 제출할 때는 기본 `input()`을 우선적으로 고려해야겠다.
+* 중첩 행렬에 대해 처음 배웠고 아직 익숙하지 않지만 원리를 이해함
+* 
 
 ```
 
