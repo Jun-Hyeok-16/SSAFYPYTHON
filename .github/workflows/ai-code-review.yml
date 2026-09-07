@@ -49,23 +49,6 @@ jobs:
       - name: GPT Code Review
         if: steps.get_diff.outputs.DIFF_EXISTS == 'true'
         run: |
-<<<<<<< HEAD
-          DIFF_CONTENT=$(cat pr_diff.txt | jq -sR .)
-          
-          RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
-            -H "Content-Type: application/json" \
-            -H "Authorization: Bearer ${{ secrets.OPENAI_API_KEY }}" \
-            -d "{
-              \"model\": \"gpt-4o-mini\",
-              \"messages\": [
-                {\"role\": \"system\", \"content\": \"당신은 꼼꼼한 코드 리뷰어입니다. 변경된 디프(diff)를 보고 한국어로 친절하게 리뷰해 주세요.\"},
-                {\"role\": \"user\", \"content\": $DIFF_CONTENT}
-              ]
-            }")
-
-          COMMENT_BODY=$(echo "$RESPONSE" | jq -r '.choices[0].message.content')
-=======
-          # 1. Diff 전체를 텍스트 손실 없이 jq를 사용해 JSON 요청 파일(payload.json)로 안전하게 생성
           jq -n --rawfile diff pr_diff.txt '{
             model: "gpt-4o-mini",
             messages: [
@@ -74,7 +57,6 @@ jobs:
             ]
           }' > payload.json
 
-          # 2. -d @payload.json 형태로 전달하여 커맨드라인 글자 수 제한(Argument list too long) 완벽 우회
           RESPONSE=$(curl -s https://api.openai.com/v1/chat/completions \
             -H "Content-Type: application/json" \
             -H "Authorization: Bearer ${{ secrets.OPENAI_API_KEY }}" \
@@ -85,7 +67,6 @@ jobs:
           if [ -z "$COMMENT_BODY" ] || [ "$COMMENT_BODY" == "null" ]; then
             COMMENT_BODY="⚠️ GPT 코드 리뷰 생성 실패 (응답을 불러오지 못했습니다)."
           fi
->>>>>>> c24d526 (update)
 
           gh pr comment "$PR_NUMBER" --body "$COMMENT_BODY"
         env:
